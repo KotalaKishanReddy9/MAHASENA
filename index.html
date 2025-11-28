@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAHASENA AI | Vulnerability Discovery</title>
+    <style>
+        /* --- RESET & BASE STYLES --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', Courier, monospace; /* Matching the reference image */
+            background-color: #ffffff;
+            color: #000000;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* --- LAYOUT --- */
+        #app-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-rows: 60px 1fr;
+        }
+
+        /* --- HEADER (Nav Bar style) --- */
+        header {
+            border-bottom: 2px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            background: #fff;
+            z-index: 10;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+            letter-spacing: -1px;
+        }
+
+        .user-badge {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .badge {
+            background: #000;
+            color: #fff;
+            padding: 2px 8px;
+            font-weight: bold;
+        }
+
+        /* --- BREADCRUMB NAV (The black bar) --- */
+        .breadcrumb-bar {
+            position: absolute;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            background: #000;
+            color: #fff;
+            padding: 10px 2rem;
+            font-size: 1rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 9;
+            overflow-x: auto;
+        }
+
+        .nav-item {
+            opacity: 0.5;
+            cursor: pointer;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-item.active {
+            opacity: 1;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+        
+        .nav-item:hover { opacity: 0.8; }
+
+        /* --- MAIN CONTENT AREA --- */
+        main {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --- 3D CANVAS --- */
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background: radial-gradient(circle at center, #f5f5f5 0%, #ffffff 100%);
+        }
+
+        /* --- TEXT OVERLAY --- */
+        .info-panel {
+            position: absolute;
+            bottom: 4rem;
+            left: 4rem;
+            width: 400px;
+            z-index: 5;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #000;
+            padding: 0;
+            box-shadow: 10px 10px 0px #000; /* Brutalist shadow */
+        }
+
+        .panel-header {
+            background: #000;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .panel-body {
+            padding: 1.5rem;
+        }
+
+        .panel-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 0.5rem;
+        }
+
+        .panel-text {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            font-family: 'Helvetica', 'Arial', sans-serif; /* Clean font for reading */
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+
+        button {
+            background: #fff;
+            border: 1px solid #000;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        /* Input style box decoration */
+        .input-box {
+            border: 2px solid #000;
+            background: #eee;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: #555;
+        }
+
+        /* --- MOBILE TWEAKS --- */
+        @media (max-width: 768px) {
+            .info-panel {
+                left: 1rem;
+                bottom: 1rem;
+                width: calc(100% - 2rem);
+            }
+            .breadcrumb-bar {
+                font-size: 0.8rem;
+            }
+        }
+        
+        .accent-orange {
+            border: 2px solid #ff4d00 !important;
+        }
+        
+        .text-orange {
+            color: #ff4d00;
+        }
+
+    </style>
+    <!-- Import Three.js via CDN -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <div id="app-container">
+        <!-- HEADER -->
+        <header>
+            <div class="logo">MAHASENA</div>
+            <div class="user-badge">
+                <span>Kotala Kishan Reddy</span>
+                <span class="badge">Collaborate</span>
+            </div>
+        </header>
+
+        <!-- MAIN AREA -->
+        <main>
+            <!-- BREADCRUMB NAV -->
+            <div class="breadcrumb-bar" id="nav-bar">
+                <!-- Javascript will populate this -->
+            </div>
+
+            <!-- 3D CANVAS -->
+            <div id="canvas-container"></div>
+
+            <!-- INFO CARD -->
+            <div class="info-panel" id="info-panel">
+                <div class="panel-header">3.1 My startup is called*</div>
+                <div class="panel-body">
+                    <div class="input-box" style="background: #fff; border: 2px solid #000; margin-bottom: 1rem; padding: 0.8rem; font-size: 1rem; font-weight: bold;">
+                        Mahasena AI
+                    </div>
+                    
+                    <h3 class="panel-title" id="section-title">Introduction</h3>
+                    <p class="panel-text" id="section-desc">
+                        Initializing Agentic AI protocols...
+                    </p>
+
+                    <div class="controls">
+                        <button id="btn-prev">&lt; PREV</button>
+                        <button id="btn-next">NEXT &gt;</button>
+                    </div>
+                    
+                    <div class="input-box" id="tech-readout">
+                        STATUS: SYSTEM NOMINAL
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // --- DATA ---
+        const sections = [
+            {
+                id: 'intro',
+                navLabel: '1. Introduction',
+                title: 'Agent 0 Architecture',
+                text: "MAHASENA is a novel approach leveraging Agentic AI architectures for proactive code screening. Founded by Kotala Kishan Reddy, it proactively identifies software vulnerabilities before exploitation.",
+                camPos: { x: 0, y: 0, z: 8 },
+                color: 0x000000,
+                status: "SYSTEM: ONLINE"
+            },
+            {
+                id: 'gap',
+                navLabel: '2. The Gap',
+                title: 'Why Current Solutions Fail',
+                text: "No industry-wide standard exists. Existing tools are underdeveloped. The complexity of AI-powered attacks is rising, creating massive 'zero-day' exposure risks.",
+                camPos: { x: 4, y: 2, z: 6 },
+                color: 0xff4d00, // Orange/Red for danger
+                status: "WARNING: VULNERABILITY DETECTED"
+            },
+            {
+                id: 'solution',
+                navLabel: '3. Proposed Solution',
+                title: 'Autonomous Red Teaming',
+                text: "We introduce an autonomous Red Teaming framework. Moving beyond static analysis, Mahasena uses dynamic agents to simulate attacks and learn defenses in real-time.",
+                camPos: { x: -4, y: 2, z: 6 },
+                color: 0x00aa00, // Green
+                status: "PROTOCOL: AGENT 0 INITIATED"
+            },
+            {
+                id: 'mechanism',
+                navLabel: '4. Mechanism',
+                title: 'Curriculum & Executor',
+                text: "Agent A (Curriculum) generates exploits. Agent B (Executor) builds defenses. They evolve together via Reinforcement Learning with Human Feedback (RLHF).",
+                camPos: { x: 0, y: 4, z: 10 },
+                color: 0x0000ff, // Blue
+                status: "PROCESS: RLHF TRAINING..."
+            },
+            {
+                id: 'impact',
+                navLabel: '5. Impact',
+                title: 'Market Feasibility',
+                text: "Targeting $1T+ in cyber-attack losses. Validated against NIST SARD & CWE datasets. Mahasena adapts autonomously to novel threats.",
+                camPos: { x: 0, y: 0, z: 7 },
+                color: 0x8A2BE2, // Purple
+                status: "RESULT: SECURE"
+            }
+        ];
+
+        let currentSectionIndex = 0;
+
+        // --- THREE.JS SETUP ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xffffff); // White background
+        scene.fog = new THREE.Fog(0xffffff, 5, 20);
+
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+        camera.position.set(0, 0, 8);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.shadowMap.enabled = true;
+        container.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.enableZoom = false;
+
+        // --- LIGHTING ---
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(ambientLight);
+
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+        dirLight.position.set(5, 5, 5);
+        dirLight.castShadow = true;
+        scene.add(dirLight);
+
+        // --- OBJECTS ---
+        
+        // 1. Central Core (The Codebase) - Wireframe Style
+        const coreGeometry = new THREE.IcosahedronGeometry(1.5, 1);
+        const coreMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0x000000, 
+            wireframe: true,
+            transparent: true,
+            opacity: 0.3
+        });
+        const core = new THREE.Mesh(coreGeometry, coreMaterial);
+        scene.add(core);
+
+        // Inner solid core
+        const innerCoreGeo = new THREE.IcosahedronGeometry(1, 0);
+        const innerCoreMat = new THREE.MeshPhongMaterial({ 
+            color: 0x000000, 
+            flatShading: true,
+            shininess: 100
+        });
+        const innerCore = new THREE.Mesh(innerCoreGeo, innerCoreMat);
+        core.add(innerCore);
+
+        // 2. Agents (Floating Spheres)
+        const agentGroup = new THREE.Group();
+        scene.add(agentGroup);
+
+        // Agent A (Attacker/Curriculum)
+        const agentAGeo = new THREE.SphereGeometry(0.3, 16, 16);
+        const agentAMat = new THREE.MeshPhongMaterial({ color: 0xff4d00 });
+        const agentA = new THREE.Mesh(agentAGeo, agentAMat);
+        agentGroup.add(agentA);
+
+        // Agent B (Defender/Executor)
+        const agentBGeo = new THREE.SphereGeometry(0.3, 16, 16);
+        const agentBMat = new THREE.MeshPhongMaterial({ color: 0x0000ff });
+        const agentB = new THREE.Mesh(agentBGeo, agentBMat);
+        agentGroup.add(agentB);
+        
+        // Grid Floor (Technical look)
+        const gridHelper = new THREE.GridHelper(20, 20, 0xdddddd, 0xeeeeee);
+        gridHelper.position.y = -3;
+        scene.add(gridHelper);
+
+        // Particles
+        const particleCount = 100;
+        const particles = new THREE.Group();
+        for(let i=0; i<particleCount; i++) {
+            const pGeo = new THREE.BoxGeometry(0.05, 0.05, 0.05);
+            const pMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+            const p = new THREE.Mesh(pGeo, pMat);
+            
+            // Random start pos
+            p.position.set(
+                (Math.random() - 0.5) * 10,
+                (Math.random() - 0.5) * 10,
+                (Math.random() - 0.5) * 10
+            );
+            p.userData = {
+                velocity: new THREE.Vector3(
+                    (Math.random() - 0.5) * 0.02,
+                    (Math.random() - 0.5) * 0.02,
+                    (Math.random() - 0.5) * 0.02
+                )
+            };
+            particles.add(p);
+        }
+        scene.add(particles);
+
+
+        // --- ANIMATION LOOP ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const time = Date.now() * 0.001;
+            const currentData = sections[currentSectionIndex];
+
+            // Core Rotation
+            core.rotation.y += 0.005;
+            core.rotation.x = Math.sin(time * 0.5) * 0.1;
+
+            // Core Pulse based on state
+            if (currentData.id === 'gap') {
+                // Glitchy movement
+                core.position.x = Math.random() * 0.1;
+                innerCoreMat.color.setHex(0xff4d00); // Red
+                innerCoreMat.wireframe = true;
+            } else if (currentData.id === 'solution') {
+                core.position.x = 0;
+                innerCoreMat.color.setHex(0x00aa00); // Green
+                innerCoreMat.wireframe = false;
+            } else {
+                core.position.x = 0;
+                innerCoreMat.color.setHex(0x000000); // Black
+                innerCoreMat.wireframe = false;
+            }
+
+            // Agents Animation
+            if (currentSectionIndex >= 2) { // Only show agents from Solution onwards
+                agentA.visible = true;
+                agentB.visible = true;
+
+                // Orbit logic
+                agentA.position.x = Math.cos(time * 2) * 2.5;
+                agentA.position.z = Math.sin(time * 2) * 2.5;
+                agentA.position.y = Math.sin(time * 3) * 1;
+
+                agentB.position.x = Math.cos(time * 1.5 + Math.PI) * 2.5;
+                agentB.position.z = Math.sin(time * 1.5 + Math.PI) * 2.5;
+                agentB.position.y = Math.cos(time * 2) * 1;
+            } else {
+                agentA.visible = false;
+                agentB.visible = false;
+            }
+
+            // Particle Field
+            particles.children.forEach(p => {
+                p.position.add(p.userData.velocity);
+                if(p.position.distanceTo(new THREE.Vector3(0,0,0)) > 6) {
+                    p.position.set(0,0,0);
+                }
+            });
+
+            // Camera smooth lerp
+            const target = new THREE.Vector3(currentData.camPos.x, currentData.camPos.y, currentData.camPos.z);
+            camera.position.lerp(target, 0.05);
+            camera.lookAt(0, 0, 0);
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+
+        // --- UI LOGIC ---
+        const navBar = document.getElementById('nav-bar');
+        const titleEl = document.getElementById('section-title');
+        const descEl = document.getElementById('section-desc');
+        const statusEl = document.getElementById('tech-readout');
+        const panelEl = document.getElementById('info-panel');
+
+        function renderNav() {
+            navBar.innerHTML = '';
+            sections.forEach((sec, idx) => {
+                const item = document.createElement('div');
+                item.className = `nav-item ${idx === currentSectionIndex ? 'active' : ''}`;
+                item.innerText = sec.navLabel + (idx < sections.length -1 ? ' ->' : '');
+                item.onclick = () => goToSection(idx);
+                navBar.appendChild(item);
+            });
+        }
+
+        function updateContent() {
+            const data = sections[currentSectionIndex];
+            titleEl.innerText = data.title;
+            descEl.innerText = data.text;
+            statusEl.innerText = data.status;
+            
+            // Highlight panel if warning
+            if(data.id === 'gap') {
+                panelEl.classList.add('accent-orange');
+                statusEl.classList.add('text-orange');
+            } else {
+                panelEl.classList.remove('accent-orange');
+                statusEl.classList.remove('text-orange');
+            }
+        }
+
+        function goToSection(index) {
+            currentSectionIndex = index;
+            renderNav();
+            updateContent();
+        }
+
+        document.getElementById('btn-next').onclick = () => {
+            if (currentSectionIndex < sections.length - 1) goToSection(currentSectionIndex + 1);
+        };
+        document.getElementById('btn-prev').onclick = () => {
+            if (currentSectionIndex > 0) goToSection(currentSectionIndex - 1);
+        };
+
+        // Handle resize
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+
+        // Init
+        renderNav();
+        updateContent();
+
+    </script>
+</body>
+</html>
