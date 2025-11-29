@@ -3,532 +3,630 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAHASENA AI | Vulnerability Discovery</title>
-    <style>
-        /* --- RESET & BASE STYLES --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Courier New', Courier, monospace; /* Matching the reference image */
-            background-color: #ffffff;
-            color: #000000;
-            overflow: hidden;
-            height: 100vh;
-            width: 100vw;
-        }
-
-        /* --- LAYOUT --- */
-        #app-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: grid;
-            grid-template-rows: 60px 1fr;
-        }
-
-        /* --- HEADER (Nav Bar style) --- */
-        header {
-            border-bottom: 2px solid #000;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 2rem;
-            background: #fff;
-            z-index: 10;
-        }
-
-        .logo {
-            font-weight: bold;
-            font-size: 1.5rem;
-            letter-spacing: -1px;
-        }
-
-        .user-badge {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.9rem;
-        }
-        
-        .badge {
-            background: #000;
-            color: #fff;
-            padding: 2px 8px;
-            font-weight: bold;
-        }
-
-        /* --- BREADCRUMB NAV (The black bar) --- */
-        .breadcrumb-bar {
-            position: absolute;
-            top: 60px;
-            left: 0;
-            width: 100%;
-            background: #000;
-            color: #fff;
-            padding: 10px 2rem;
-            font-size: 1rem;
-            display: flex;
-            gap: 1rem;
-            z-index: 9;
-            overflow-x: auto;
-        }
-
-        .nav-item {
-            opacity: 0.5;
-            cursor: pointer;
-            transition: opacity 0.3s;
-            white-space: nowrap;
-        }
-
-        .nav-item.active {
-            opacity: 1;
-            font-weight: bold;
-            text-decoration: underline;
-        }
-        
-        .nav-item:hover { opacity: 0.8; }
-
-        /* --- MAIN CONTENT AREA --- */
-        main {
-            position: relative;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* --- 3D CANVAS --- */
-        #canvas-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            background: radial-gradient(circle at center, #f5f5f5 0%, #ffffff 100%);
-        }
-
-        /* --- TEXT OVERLAY --- */
-        .info-panel {
-            position: absolute;
-            bottom: 4rem;
-            left: 4rem;
-            width: 400px;
-            z-index: 5;
-            background: rgba(255, 255, 255, 0.9);
-            border: 2px solid #000;
-            padding: 0;
-            box-shadow: 10px 10px 0px #000; /* Brutalist shadow */
-        }
-
-        .panel-header {
-            background: #000;
-            color: #fff;
-            padding: 0.5rem 1rem;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        .panel-body {
-            padding: 1.5rem;
-        }
-
-        .panel-title {
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 0.5rem;
-        }
-
-        .panel-text {
-            font-size: 0.9rem;
-            line-height: 1.5;
-            margin-bottom: 1rem;
-            font-family: 'Helvetica', 'Arial', sans-serif; /* Clean font for reading */
-        }
-
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 1rem;
-        }
-
-        button {
-            background: #fff;
-            border: 1px solid #000;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: bold;
-            transition: all 0.2s;
-        }
-
-        button:hover {
-            background: #000;
-            color: #fff;
-        }
-
-        /* Input style box decoration */
-        .input-box {
-            border: 2px solid #000;
-            background: #eee;
-            padding: 0.5rem;
-            margin-top: 0.5rem;
-            font-size: 0.8rem;
-            color: #555;
-        }
-
-        /* --- MOBILE TWEAKS --- */
-        @media (max-width: 768px) {
-            .info-panel {
-                left: 1rem;
-                bottom: 1rem;
-                width: calc(100% - 2rem);
-            }
-            .breadcrumb-bar {
-                font-size: 0.8rem;
-            }
-        }
-        
-        .accent-orange {
-            border: 2px solid #ff4d00 !important;
-        }
-        
-        .text-orange {
-            color: #ff4d00;
-        }
-
-    </style>
-    <!-- Import Three.js via CDN -->
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    <title>MAHASENA | Agentic AI Security</title>
+    
+    <!-- 1. Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 2. Tailwind Configuration to match your custom aesthetic -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    animation: {
+                        'spin-slow': 'spin 8s linear infinite',
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        slideRight: {
+                            '0%': { transform: 'translateX(0)', opacity: '1' },
+                            '100%': { transform: 'translateX(100px)', opacity: '0' },
+                        },
+                        slideLeft: {
+                            '0%': { transform: 'translateX(0)', opacity: '1' },
+                            '100%': { transform: 'translateX(-100px)', opacity: '0' },
+                        }
+                    }
+                }
             }
         }
     </script>
+
+    <!-- 3. Babel for compiling React code in the browser -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- 4. Import Map to tell the browser where to find React & Lucide icons -->
+    <script type="importmap">
+    {
+        "imports": {
+            "react": "https://esm.sh/react@18.2.0",
+            "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+            "lucide-react": "https://esm.sh/lucide-react@0.263.1"
+        }
+    }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: black; }
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+    </style>
 </head>
 <body>
+    <div id="root"></div>
 
-    <div id="app-container">
-        <!-- HEADER -->
-        <header>
-            <div class="logo">MAHASENA</div>
-            <div class="user-badge">
-                <span>Kotala Kishan Reddy</span>
-                <span class="badge">Collaborate</span>
+    <!-- 5. Your React Code -->
+    <script type="text/babel" data-type="module">
+        import React, { useState, useEffect, useRef } from 'react';
+        import { createRoot } from 'react-dom/client';
+        import { 
+            Shield, 
+            Sword, 
+            Cpu, 
+            Terminal, 
+            Activity, 
+            Lock, 
+            Zap, 
+            ChevronDown, 
+            Globe, 
+            Server,
+            Code,
+            AlertTriangle,
+            CheckCircle,
+            Database,
+            RefreshCw
+        } from 'lucide-react';
+
+        /**
+         * MAHASENA - High Fidelity Whitepaper Visualization
+         * Aesthetic: Dark, Cyber-Security, Red Teaming, Minimalist Luxury.
+         */
+
+        // --- Components ---
+
+        const GlitchText = ({ text, className = "" }) => {
+            return (
+                <div className={`relative inline-block group ${className}`}>
+                <span className="relative z-10">{text}</span>
+                <span className="absolute top-0 left-0 -z-10 w-full h-full text-red-500 opacity-0 group-hover:opacity-70 group-hover:translate-x-[2px] transition-all duration-100 ease-in-out">
+                    {text}
+                </span>
+                <span className="absolute top-0 left-0 -z-10 w-full h-full text-blue-500 opacity-0 group-hover:opacity-70 group-hover:-translate-x-[2px] transition-all duration-100 ease-in-out">
+                    {text}
+                </span>
+                </div>
+            );
+        };
+
+        const SectionHeader = ({ title, subtitle }) => (
+            <div className="mb-16 md:mb-24 px-6 md:px-0">
+                <h2 className="text-4xl md:text-6xl font-bold tracking-tighter text-white mb-4">
+                {title} <span className="text-red-600">.</span>
+                </h2>
+                <div className="h-1 w-24 bg-red-600 mb-6" />
+                <p className="text-zinc-400 text-lg md:text-xl max-w-2xl leading-relaxed">
+                {subtitle}
+                </p>
             </div>
-        </header>
+        );
 
-        <!-- MAIN AREA -->
-        <main>
-            <!-- BREADCRUMB NAV -->
-            <div class="breadcrumb-bar" id="nav-bar">
-                <!-- Javascript will populate this -->
+        const GlassCard = ({ children, className = "", redGlow = false }) => (
+            <div 
+                className={`
+                relative overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/40 backdrop-blur-md 
+                transition-all duration-500 hover:bg-zinc-900/60 hover:border-zinc-700 hover:shadow-2xl
+                ${redGlow ? 'hover:shadow-red-900/20 hover:border-red-900/50' : ''}
+                ${className}
+                `}
+            >
+                {children}
             </div>
+        );
 
-            <!-- 3D CANVAS -->
-            <div id="canvas-container"></div>
-
-            <!-- INFO CARD -->
-            <div class="info-panel" id="info-panel">
-                <div class="panel-header">3.1 My startup is called*</div>
-                <div class="panel-body">
-                    <div class="input-box" style="background: #fff; border: 2px solid #000; margin-bottom: 1rem; padding: 0.8rem; font-size: 1rem; font-weight: bold;">
-                        Mahasena AI
+        const AgentCard = ({ title, icon: Icon, role, description, type }) => {
+            const isRed = type === 'attacker';
+            return (
+                <div className={`group relative p-8 rounded-3xl border ${isRed ? 'border-red-900/30 bg-gradient-to-b from-zinc-900 to-red-950/10' : 'border-blue-900/30 bg-gradient-to-b from-zinc-900 to-blue-950/10'} hover:scale-[1.02] transition-transform duration-500`}>
+                <div className={`absolute top-0 right-0 p-4 opacity-20 group-hover:opacity-40 transition-opacity ${isRed ? 'text-red-500' : 'text-blue-500'}`}>
+                    <Icon size={120} strokeWidth={0.5} />
+                </div>
+                
+                <div className="relative z-10">
+                    <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-6 ${isRed ? 'bg-red-500/20 text-red-500' : 'bg-blue-500/20 text-blue-500'}`}>
+                    <Icon size={24} />
                     </div>
-                    
-                    <h3 class="panel-title" id="section-title">Introduction</h3>
-                    <p class="panel-text" id="section-desc">
-                        Initializing Agentic AI protocols...
+                    <h3 className="text-3xl font-bold text-white mb-2">{title}</h3>
+                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-mono uppercase tracking-widest mb-6 ${isRed ? 'bg-red-950 text-red-400 border border-red-900' : 'bg-blue-950 text-blue-400 border border-blue-900'}`}>
+                    {role}
+                    </span>
+                    <p className="text-zinc-400 leading-relaxed">
+                    {description}
                     </p>
+                </div>
+                </div>
+            );
+        };
 
-                    <div class="controls">
-                        <button id="btn-prev">&lt; PREV</button>
-                        <button id="btn-next">NEXT &gt;</button>
+        const SimulationDashboard = () => {
+            const [step, setStep] = useState(0); // 0: Idle, 1: Attack, 2: Detect, 3: Patch, 4: Learn
+            const [logs, setLogs] = useState(["System initialized..."]);
+            const [stats, setStats] = useState({ exploits: 0, patched: 0, accuracy: 94.2 });
+
+            useEffect(() => {
+                const cycle = [
+                { s: 1, delay: 2000, log: "> AGENT A: Generating polymorphic buffer overflow..." },
+                { s: 2, delay: 1500, log: "> SYSTEM: Anomaly detected in memory block 0x4F..." },
+                { s: 3, delay: 1500, log: "> AGENT B: Analyzing execution pattern..." },
+                { s: 4, delay: 1500, log: "> AGENT B: Patch deployed. Vulnerability mitigated." },
+                { s: 0, delay: 2000, log: "> RLHF: Reward function +1.0. Model weights updated." }
+                ];
+
+                let currentIdx = 0;
+                
+                const runSimulation = () => {
+                const current = cycle[currentIdx];
+                setStep(current.s);
+                setLogs(prev => [current.log, ...prev].slice(0, 6));
+                
+                if (current.s === 4) {
+                    setStats(prev => ({ 
+                    exploits: prev.exploits + 1, 
+                    patched: prev.patched + 1, 
+                    accuracy: Math.min(99.9, prev.accuracy + 0.1) 
+                    }));
+                }
+
+                currentIdx = (currentIdx + 1) % cycle.length;
+                setTimeout(runSimulation, current.delay);
+                };
+
+                const timer = setTimeout(runSimulation, 1000);
+                return () => clearTimeout(timer);
+            }, []);
+
+            return (
+                <div className="rounded-3xl border border-zinc-800 bg-black/50 backdrop-blur-xl overflow-hidden shadow-2xl">
+                {/* HUD Header */}
+                <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800 bg-zinc-900/50">
+                    <div className="flex items-center gap-3">
+                    <Activity size={18} className="text-red-500 animate-pulse" />
+                    <span className="text-xs font-mono text-zinc-400 uppercase tracking-widest">Live Simulation Env_01</span>
                     </div>
-                    
-                    <div class="input-box" id="tech-readout">
-                        STATUS: SYSTEM NOMINAL
+                    <div className="flex gap-4 text-xs font-mono">
+                    <span className="text-zinc-500">CPU: <span className="text-white">42%</span></span>
+                    <span className="text-zinc-500">MEM: <span className="text-white">12GB</span></span>
+                    <span className="text-zinc-500">NET: <span className="text-green-500">SECURE</span></span>
                     </div>
                 </div>
-            </div>
-        </main>
-    </div>
 
-    <!-- JAVASCRIPT LOGIC -->
-    <script type="module">
-        import * as THREE from 'three';
-        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+                <div className="p-8 md:p-12 grid lg:grid-cols-3 gap-12 relative">
+                    
+                    {/* Connection Lines (Desktop) */}
+                    <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-px bg-zinc-800/50 -z-10 transform -translate-y-1/2"></div>
+                    
+                    {/* Agent A (Attacker) */}
+                    <div className={`relative transition-all duration-500 ${step === 1 ? 'scale-105 opacity-100' : 'opacity-60 grayscale'}`}>
+                    <div className={`absolute -inset-4 bg-red-600/20 blur-2xl rounded-full transition-opacity duration-300 ${step === 1 ? 'opacity-100' : 'opacity-0'}`}></div>
+                    <div className="relative bg-zinc-900 border border-red-900/30 p-6 rounded-2xl flex flex-col items-center text-center">
+                        <div className={`w-16 h-16 rounded-full bg-red-900/20 flex items-center justify-center mb-4 border border-red-500/30 ${step === 1 ? 'animate-pulse shadow-[0_0_20px_rgba(220,38,38,0.4)]' : ''}`}>
+                        <Sword size={28} className="text-red-500" />
+                        </div>
+                        <h4 className="text-white font-bold mb-1">Agent A</h4>
+                        <p className="text-xs text-red-400 uppercase tracking-wider">Curriculum Generator</p>
+                        
+                        {/* Projectile */}
+                        {step === 1 && (
+                        <div className="absolute top-1/2 left-full w-24 h-1 bg-gradient-to-r from-red-500 to-transparent animate-[slideRight_0.5s_ease-out_forwards] z-20"></div>
+                        )}
+                    </div>
+                    </div>
 
-        // --- DATA ---
-        const sections = [
-            {
-                id: 'intro',
-                navLabel: '1. Introduction',
-                title: 'Agent 0 Architecture',
-                text: "MAHASENA is a novel approach leveraging Agentic AI architectures for proactive code screening. Founded by Kotala Kishan Reddy, it proactively identifies software vulnerabilities before exploitation.",
-                camPos: { x: 0, y: 0, z: 8 },
-                color: 0x000000,
-                status: "SYSTEM: ONLINE"
-            },
-            {
-                id: 'gap',
-                navLabel: '2. The Gap',
-                title: 'Why Current Solutions Fail',
-                text: "No industry-wide standard exists. Existing tools are underdeveloped. The complexity of AI-powered attacks is rising, creating massive 'zero-day' exposure risks.",
-                camPos: { x: 4, y: 2, z: 6 },
-                color: 0xff4d00, // Orange/Red for danger
-                status: "WARNING: VULNERABILITY DETECTED"
-            },
-            {
-                id: 'solution',
-                navLabel: '3. Proposed Solution',
-                title: 'Autonomous Red Teaming',
-                text: "We introduce an autonomous Red Teaming framework. Moving beyond static analysis, Mahasena uses dynamic agents to simulate attacks and learn defenses in real-time.",
-                camPos: { x: -4, y: 2, z: 6 },
-                color: 0x00aa00, // Green
-                status: "PROTOCOL: AGENT 0 INITIATED"
-            },
-            {
-                id: 'mechanism',
-                navLabel: '4. Mechanism',
-                title: 'Curriculum & Executor',
-                text: "Agent A (Curriculum) generates exploits. Agent B (Executor) builds defenses. They evolve together via Reinforcement Learning with Human Feedback (RLHF).",
-                camPos: { x: 0, y: 4, z: 10 },
-                color: 0x0000ff, // Blue
-                status: "PROCESS: RLHF TRAINING..."
-            },
-            {
-                id: 'impact',
-                navLabel: '5. Impact',
-                title: 'Market Feasibility',
-                text: "Targeting $1T+ in cyber-attack losses. Validated against NIST SARD & CWE datasets. Mahasena adapts autonomously to novel threats.",
-                camPos: { x: 0, y: 0, z: 7 },
-                color: 0x8A2BE2, // Purple
-                status: "RESULT: SECURE"
-            }
-        ];
+                    {/* The System (Center) */}
+                    <div className="relative flex flex-col items-center justify-center">
+                    <div className={`w-32 h-32 rounded-full border-2 flex items-center justify-center transition-all duration-300 relative z-10 bg-black
+                        ${step === 2 ? 'border-red-500 shadow-[0_0_30px_rgba(220,38,38,0.5)]' : 
+                        step === 4 ? 'border-green-500 shadow-[0_0_30px_rgba(34,197,94,0.5)]' : 
+                        'border-zinc-700'}`}>
+                        
+                        {step === 2 ? (
+                        <AlertTriangle size={48} className="text-red-500 animate-bounce" />
+                        ) : step === 4 ? (
+                        <CheckCircle size={48} className="text-green-500 animate-pulse" />
+                        ) : (
+                        <Server size={48} className="text-zinc-500" />
+                        )}
+                    </div>
+                    <p className="mt-4 text-xs font-mono text-zinc-500 uppercase tracking-widest">
+                        {step === 2 ? <span className="text-red-500 font-bold">Infiltration Attempt</span> : 
+                        step === 4 ? <span className="text-green-500 font-bold">Patch Applied</span> : 
+                        "System Monitoring"}
+                    </p>
+                    </div>
 
-        let currentSectionIndex = 0;
+                    {/* Agent B (Defender) */}
+                    <div className={`relative transition-all duration-500 ${step === 3 || step === 4 ? 'scale-105 opacity-100' : 'opacity-60 grayscale'}`}>
+                    <div className={`absolute -inset-4 bg-blue-600/20 blur-2xl rounded-full transition-opacity duration-300 ${step === 3 ? 'opacity-100' : 'opacity-0'}`}></div>
+                    <div className="relative bg-zinc-900 border border-blue-900/30 p-6 rounded-2xl flex flex-col items-center text-center">
+                        <div className={`w-16 h-16 rounded-full bg-blue-900/20 flex items-center justify-center mb-4 border border-blue-500/30 ${step === 3 ? 'animate-spin-slow shadow-[0_0_20px_rgba(59,130,246,0.4)]' : ''}`}>
+                        <Shield size={28} className="text-blue-500" />
+                        </div>
+                        <h4 className="text-white font-bold mb-1">Agent B</h4>
+                        <p className="text-xs text-blue-400 uppercase tracking-wider">Executor Defense</p>
 
-        // --- THREE.JS SETUP ---
-        const container = document.getElementById('canvas-container');
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xffffff); // White background
-        scene.fog = new THREE.Fog(0xffffff, 5, 20);
+                        {/* Scanning Beam */}
+                        {step === 3 && (
+                        <div className="absolute top-1/2 right-full w-24 h-1 bg-gradient-to-l from-blue-500 to-transparent animate-[slideLeft_0.5s_ease-out_forwards] z-20"></div>
+                        )}
+                    </div>
+                    </div>
+                </div>
 
-        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
-        camera.position.set(0, 0, 8);
+                {/* Terminal & Stats */}
+                <div className="grid md:grid-cols-2 border-t border-zinc-800">
+                    {/* Console Log */}
+                    <div className="p-6 bg-black font-mono text-xs md:text-sm h-48 overflow-hidden relative">
+                    <div className="absolute top-2 right-2 flex gap-1">
+                        <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                        <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
+                        <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                    </div>
+                    <div className="space-y-2">
+                        {logs.map((log, i) => (
+                        <p key={i} className={`truncate transition-all duration-300 ${i === 0 ? 'text-white font-bold' : 'text-zinc-600'}`}>
+                            {log}
+                        </p>
+                        ))}
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black to-transparent"></div>
+                    </div>
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(container.clientWidth, container.clientHeight);
-        renderer.shadowMap.enabled = true;
-        container.appendChild(renderer.domElement);
-
-        const controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.enableZoom = false;
-
-        // --- LIGHTING ---
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-        scene.add(ambientLight);
-
-        const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-        dirLight.position.set(5, 5, 5);
-        dirLight.castShadow = true;
-        scene.add(dirLight);
-
-        // --- OBJECTS ---
-        
-        // 1. Central Core (The Codebase) - Wireframe Style
-        const coreGeometry = new THREE.IcosahedronGeometry(1.5, 1);
-        const coreMaterial = new THREE.MeshBasicMaterial({ 
-            color: 0x000000, 
-            wireframe: true,
-            transparent: true,
-            opacity: 0.3
-        });
-        const core = new THREE.Mesh(coreGeometry, coreMaterial);
-        scene.add(core);
-
-        // Inner solid core
-        const innerCoreGeo = new THREE.IcosahedronGeometry(1, 0);
-        const innerCoreMat = new THREE.MeshPhongMaterial({ 
-            color: 0x000000, 
-            flatShading: true,
-            shininess: 100
-        });
-        const innerCore = new THREE.Mesh(innerCoreGeo, innerCoreMat);
-        core.add(innerCore);
-
-        // 2. Agents (Floating Spheres)
-        const agentGroup = new THREE.Group();
-        scene.add(agentGroup);
-
-        // Agent A (Attacker/Curriculum)
-        const agentAGeo = new THREE.SphereGeometry(0.3, 16, 16);
-        const agentAMat = new THREE.MeshPhongMaterial({ color: 0xff4d00 });
-        const agentA = new THREE.Mesh(agentAGeo, agentAMat);
-        agentGroup.add(agentA);
-
-        // Agent B (Defender/Executor)
-        const agentBGeo = new THREE.SphereGeometry(0.3, 16, 16);
-        const agentBMat = new THREE.MeshPhongMaterial({ color: 0x0000ff });
-        const agentB = new THREE.Mesh(agentBGeo, agentBMat);
-        agentGroup.add(agentB);
-        
-        // Grid Floor (Technical look)
-        const gridHelper = new THREE.GridHelper(20, 20, 0xdddddd, 0xeeeeee);
-        gridHelper.position.y = -3;
-        scene.add(gridHelper);
-
-        // Particles
-        const particleCount = 100;
-        const particles = new THREE.Group();
-        for(let i=0; i<particleCount; i++) {
-            const pGeo = new THREE.BoxGeometry(0.05, 0.05, 0.05);
-            const pMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
-            const p = new THREE.Mesh(pGeo, pMat);
-            
-            // Random start pos
-            p.position.set(
-                (Math.random() - 0.5) * 10,
-                (Math.random() - 0.5) * 10,
-                (Math.random() - 0.5) * 10
+                    {/* Live Stats */}
+                    <div className="p-6 border-t md:border-t-0 md:border-l border-zinc-800 flex flex-col justify-center gap-6 bg-zinc-900/30">
+                    <div className="flex justify-between items-end">
+                        <div>
+                            <p className="text-zinc-500 text-xs uppercase mb-1">Exploits Attempted</p>
+                            <p className="text-2xl font-mono text-white">{stats.exploits.toLocaleString()}</p>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-zinc-500 text-xs uppercase mb-1">Threats Neutralized</p>
+                            <p className="text-2xl font-mono text-green-500">{stats.patched.toLocaleString()}</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div className="flex justify-between text-xs mb-2">
+                            <span className="text-zinc-400">Model Robustness</span>
+                            <span className="text-blue-400 font-bold">{stats.accuracy.toFixed(1)}%</span>
+                        </div>
+                        <div className="h-1 w-full bg-zinc-800 rounded-full overflow-hidden">
+                            <div 
+                            className="h-full bg-blue-500 transition-all duration-1000 ease-out" 
+                            style={{ width: `${stats.accuracy}%` }}
+                            ></div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
             );
-            p.userData = {
-                velocity: new THREE.Vector3(
-                    (Math.random() - 0.5) * 0.02,
-                    (Math.random() - 0.5) * 0.02,
-                    (Math.random() - 0.5) * 0.02
-                )
-            };
-            particles.add(p);
-        }
-        scene.add(particles);
-
-
-        // --- ANIMATION LOOP ---
-        function animate() {
-            requestAnimationFrame(animate);
-
-            const time = Date.now() * 0.001;
-            const currentData = sections[currentSectionIndex];
-
-            // Core Rotation
-            core.rotation.y += 0.005;
-            core.rotation.x = Math.sin(time * 0.5) * 0.1;
-
-            // Core Pulse based on state
-            if (currentData.id === 'gap') {
-                // Glitchy movement
-                core.position.x = Math.random() * 0.1;
-                innerCoreMat.color.setHex(0xff4d00); // Red
-                innerCoreMat.wireframe = true;
-            } else if (currentData.id === 'solution') {
-                core.position.x = 0;
-                innerCoreMat.color.setHex(0x00aa00); // Green
-                innerCoreMat.wireframe = false;
-            } else {
-                core.position.x = 0;
-                innerCoreMat.color.setHex(0x000000); // Black
-                innerCoreMat.wireframe = false;
-            }
-
-            // Agents Animation
-            if (currentSectionIndex >= 2) { // Only show agents from Solution onwards
-                agentA.visible = true;
-                agentB.visible = true;
-
-                // Orbit logic
-                agentA.position.x = Math.cos(time * 2) * 2.5;
-                agentA.position.z = Math.sin(time * 2) * 2.5;
-                agentA.position.y = Math.sin(time * 3) * 1;
-
-                agentB.position.x = Math.cos(time * 1.5 + Math.PI) * 2.5;
-                agentB.position.z = Math.sin(time * 1.5 + Math.PI) * 2.5;
-                agentB.position.y = Math.cos(time * 2) * 1;
-            } else {
-                agentA.visible = false;
-                agentB.visible = false;
-            }
-
-            // Particle Field
-            particles.children.forEach(p => {
-                p.position.add(p.userData.velocity);
-                if(p.position.distanceTo(new THREE.Vector3(0,0,0)) > 6) {
-                    p.position.set(0,0,0);
-                }
-            });
-
-            // Camera smooth lerp
-            const target = new THREE.Vector3(currentData.camPos.x, currentData.camPos.y, currentData.camPos.z);
-            camera.position.lerp(target, 0.05);
-            camera.lookAt(0, 0, 0);
-
-            controls.update();
-            renderer.render(scene, camera);
-        }
-        animate();
-
-
-        // --- UI LOGIC ---
-        const navBar = document.getElementById('nav-bar');
-        const titleEl = document.getElementById('section-title');
-        const descEl = document.getElementById('section-desc');
-        const statusEl = document.getElementById('tech-readout');
-        const panelEl = document.getElementById('info-panel');
-
-        function renderNav() {
-            navBar.innerHTML = '';
-            sections.forEach((sec, idx) => {
-                const item = document.createElement('div');
-                item.className = `nav-item ${idx === currentSectionIndex ? 'active' : ''}`;
-                item.innerText = sec.navLabel + (idx < sections.length -1 ? ' ->' : '');
-                item.onclick = () => goToSection(idx);
-                navBar.appendChild(item);
-            });
-        }
-
-        function updateContent() {
-            const data = sections[currentSectionIndex];
-            titleEl.innerText = data.title;
-            descEl.innerText = data.text;
-            statusEl.innerText = data.status;
-            
-            // Highlight panel if warning
-            if(data.id === 'gap') {
-                panelEl.classList.add('accent-orange');
-                statusEl.classList.add('text-orange');
-            } else {
-                panelEl.classList.remove('accent-orange');
-                statusEl.classList.remove('text-orange');
-            }
-        }
-
-        function goToSection(index) {
-            currentSectionIndex = index;
-            renderNav();
-            updateContent();
-        }
-
-        document.getElementById('btn-next').onclick = () => {
-            if (currentSectionIndex < sections.length - 1) goToSection(currentSectionIndex + 1);
-        };
-        document.getElementById('btn-prev').onclick = () => {
-            if (currentSectionIndex > 0) goToSection(currentSectionIndex - 1);
         };
 
-        // Handle resize
-        window.addEventListener('resize', () => {
-            camera.aspect = container.clientWidth / container.clientHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(container.clientWidth, container.clientHeight);
-        });
+        // --- Main App ---
 
-        // Init
-        renderNav();
-        updateContent();
+        const App = () => {
+            const [scrolled, setScrolled] = useState(false);
+            const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
+            useEffect(() => {
+                const handleScroll = () => setScrolled(window.scrollY > 50);
+                const handleMouseMove = (e) => setMousePos({ x: e.clientX, y: e.clientY });
+                
+                window.addEventListener('scroll', handleScroll);
+                window.addEventListener('mousemove', handleMouseMove);
+                return () => {
+                window.removeEventListener('scroll', handleScroll);
+                window.removeEventListener('mousemove', handleMouseMove);
+                };
+            }, []);
+
+            return (
+                <div className="min-h-screen bg-black text-zinc-100 font-sans selection:bg-red-500/30 selection:text-white overflow-x-hidden">
+                
+                {/* Background Ambience */}
+                <div className="fixed inset-0 z-0 pointer-events-none">
+                    <div 
+                    className="absolute w-[800px] h-[800px] rounded-full bg-red-600/5 blur-[120px] transition-transform duration-1000 ease-out"
+                    style={{ 
+                        transform: `translate(${mousePos.x * 0.02}px, ${mousePos.y * 0.02}px)`,
+                        top: '-20%', left: '-10%' 
+                    }}
+                    />
+                    <div 
+                    className="absolute w-[600px] h-[600px] rounded-full bg-blue-600/5 blur-[100px] transition-transform duration-1000 ease-out"
+                    style={{ 
+                        transform: `translate(${mousePos.x * -0.02}px, ${mousePos.y * -0.02}px)`,
+                        bottom: '-10%', right: '-10%' 
+                    }}
+                    />
+                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+                </div>
+
+                {/* Navigation */}
+                <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-black/80 backdrop-blur-lg border-b border-zinc-900 py-4' : 'py-8 bg-transparent'}`}>
+                    <div className="container mx-auto px-6 flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                        <Shield className="text-red-500" size={24} />
+                        <span className="text-xl font-bold tracking-widest text-white">MAHASENA</span>
+                    </div>
+                    <div className="hidden md:flex gap-8 text-sm font-medium text-zinc-400">
+                        <a href="#about" className="hover:text-white transition-colors">Overview</a>
+                        <a href="#simulation" className="hover:text-white transition-colors">Simulation</a>
+                        <a href="#architecture" className="hover:text-white transition-colors">Architecture</a>
+                        <a href="#implementation" className="hover:text-white transition-colors">Tech Stack</a>
+                    </div>
+                    <button className="bg-white text-black px-6 py-2 rounded-full font-medium text-sm hover:bg-zinc-200 transition-colors">
+                        Read Paper
+                    </button>
+                    </div>
+                </nav>
+
+                {/* Hero Section */}
+                <header className="relative min-h-screen flex items-center justify-center z-10 pt-20">
+                    <div className="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-800 bg-zinc-900/50 mb-8 animate-fade-in-up">
+                        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                        <span className="text-xs font-mono text-zinc-400 uppercase tracking-widest">Agentic AI Security</span>
+                        </div>
+                        
+                        <h1 className="text-6xl md:text-8xl font-black text-white leading-none tracking-tighter mb-8">
+                        MAHA<br/>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-800">SENA</span>
+                        </h1>
+                        
+                        <p className="text-xl md:text-2xl text-zinc-400 max-w-lg mb-12 leading-relaxed">
+                        Proactive vulnerability discovery leveraging <span className="text-white">Agent 0 Architecture</span>. Automating the red teaming process before exploitation begins.
+                        </p>
+
+                        <div className="flex flex-col md:flex-row gap-6">
+                        <div className="border-l-2 border-red-600 pl-4">
+                            <p className="text-xs text-zinc-500 uppercase tracking-widest mb-1">Founder</p>
+                            <p className="font-bold text-white">Kotala Kishan Reddy</p>
+                        </div>
+                        <div className="border-l-2 border-zinc-800 pl-4">
+                            <p className="text-xs text-zinc-500 uppercase tracking-widest mb-1">Architecture</p>
+                            <p className="font-bold text-white">Curriculum & Executor Agents</p>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div className="relative hidden md:block h-[600px] w-full">
+                        {/* Visual Abstract Art */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="relative w-80 h-80">
+                            <div className="absolute inset-0 border border-zinc-800 rounded-full animate-[spin_10s_linear_infinite]"></div>
+                            <div className="absolute inset-4 border border-dashed border-zinc-700 rounded-full animate-[spin_15s_linear_infinite_reverse]"></div>
+                            <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-40 h-40 bg-gradient-to-br from-red-600 to-black rounded-full blur-2xl opacity-40 animate-pulse"></div>
+                            <Shield size={120} className="text-white relative z-10 drop-shadow-[0_0_15px_rgba(255,0,0,0.5)]" />
+                            </div>
+                            
+                            {/* Floating "Nodes" */}
+                            <div className="absolute -top-10 -right-10 bg-zinc-900 border border-zinc-800 p-4 rounded-xl shadow-xl backdrop-blur-sm animate-bounce duration-[3000ms]">
+                            <Terminal size={20} className="text-red-500 mb-2" />
+                            <div className="h-1 w-12 bg-zinc-700 rounded mb-1"></div>
+                            <div className="h-1 w-8 bg-zinc-800 rounded"></div>
+                            </div>
+                            
+                            <div className="absolute -bottom-5 -left-10 bg-zinc-900 border border-zinc-800 p-4 rounded-xl shadow-xl backdrop-blur-sm animate-bounce duration-[4000ms]">
+                            <Code size={20} className="text-blue-500 mb-2" />
+                            <div className="h-1 w-12 bg-zinc-700 rounded mb-1"></div>
+                            <div className="h-1 w-8 bg-zinc-800 rounded"></div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+
+                    <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+                    <ChevronDown className="text-zinc-600" />
+                    </div>
+                </header>
+
+                {/* Intro Section */}
+                <section id="about" className="py-24 md:py-32 relative z-10 border-t border-zinc-900">
+                    <div className="container mx-auto px-6">
+                    <div className="grid md:grid-cols-12 gap-12">
+                        <div className="md:col-span-4">
+                        <h3 className="text-red-500 font-mono text-sm tracking-widest mb-4">THE PROBLEM</h3>
+                        <h2 className="text-4xl font-bold text-white mb-6">AI-Enabled Threats require AI-Enabled Defense.</h2>
+                        <p className="text-zinc-400">
+                            Cyber-attacks are evolving. With the rise of Generative AI, threat actors now use autonomous agents to exploit vulnerabilities. Traditional static analysis is no longer sufficient.
+                        </p>
+                        </div>
+                        <div className="md:col-span-8 grid md:grid-cols-2 gap-6">
+                            <GlassCard className="p-8">
+                            <Activity className="text-red-500 mb-4" size={32} />
+                            <h4 className="text-xl font-bold text-white mb-2">The Gap</h4>
+                            <p className="text-sm text-zinc-400">
+                                No industry-wide standard for AI-driven code vulnerability screening. Most tools are underdeveloped or misused.
+                            </p>
+                            </GlassCard>
+                            <GlassCard className="p-8">
+                            <Lock className="text-white mb-4" size={32} />
+                            <h4 className="text-xl font-bold text-white mb-2">The Impact</h4>
+                            <p className="text-sm text-zinc-400">
+                                Cyber-attacks cause over <span className="text-white font-bold">$1 Trillion</span> in annual losses. Proactive mitigation is an economic necessity.
+                            </p>
+                            </GlassCard>
+                        </div>
+                    </div>
+                    </div>
+                </section>
+
+                {/* Simulation Section */}
+                <section id="simulation" className="py-24 md:py-32 relative z-10 bg-zinc-950/50">
+                    <div className="container mx-auto px-6">
+                    <SectionHeader 
+                        title="Live Threat Simulation" 
+                        subtitle="Watch the Mahasena Engine in action. The Curriculum Agent generates novel exploits, while the Executor Agent learns to mitigate them in real-time." 
+                    />
+                    <div className="max-w-5xl mx-auto">
+                        <SimulationDashboard />
+                    </div>
+                    </div>
+                </section>
+
+                {/* Architecture Section */}
+                <section id="architecture" className="py-24 md:py-32 bg-zinc-950 relative z-10">
+                    <div className="container mx-auto px-6">
+                    <SectionHeader 
+                        title="The Dual-Agent System" 
+                        subtitle="Mahasena employs a curriculum-based learning architecture where two agents constantly challenge each other to improve system robustness." 
+                    />
+
+                    <div className="grid md:grid-cols-2 gap-8 relative">
+                        {/* Connecting Line (Desktop) */}
+                        <div className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+                        <div className="bg-zinc-900 border border-zinc-800 p-3 rounded-full">
+                            <Zap className="text-yellow-500 fill-yellow-500/20" size={24} />
+                        </div>
+                        </div>
+
+                        <AgentCard 
+                        type="attacker"
+                        title="Curriculum Agent"
+                        role="Agent A (Teacher)"
+                        icon={Sword}
+                        description="Designed to generate progressive, evolving challenges. It simulates real-world exploits and malicious patterns to test the system's limits."
+                        />
+
+                        <AgentCard 
+                        type="defender"
+                        title="Executor Agent"
+                        role="Agent B (Student)"
+                        icon={Shield}
+                        description="Tasked with addressing the challenges posed by Agent A. It iteratively refines its detection strategies using Reinforcement Learning."
+                        />
+                    </div>
+
+                    <div className="mt-12 p-8 border border-zinc-800 rounded-2xl bg-zinc-900/30 text-center">
+                        <h4 className="text-lg text-white font-bold mb-2">Powered by RLHF</h4>
+                        <p className="text-zinc-400 max-w-2xl mx-auto text-sm">
+                        Reinforcement Learning with Human Feedback ensures that the Executor Agent doesn't just learn to beat the game, but learns meaningful security context validated against datasets like NIST SARD and CWE.
+                        </p>
+                    </div>
+                    </div>
+                </section>
+
+                {/* Implementation Details */}
+                <section id="implementation" className="py-24 md:py-32 relative z-10">
+                    <div className="container mx-auto px-6">
+                    <div className="grid md:grid-cols-2 gap-16 items-center">
+                        <div>
+                        <SectionHeader 
+                            title="Implementation" 
+                            subtitle="Built on robust, industry-standard frameworks for maximum reliability and scalability." 
+                        />
+                        
+                        <ul className="space-y-6">
+                            {[
+                            { label: "Core Language", val: "Python" },
+                            { label: "ML Framework", val: "TensorFlow (RLHF Models)" },
+                            { label: "Training Data", val: "NIST SARD & CWE Datasets" },
+                            { label: "Hardware", val: "NVIDIA RTX 3090 / 128GB RAM" },
+                            { label: "Evaluation", val: "OWASP Benchmark Metrics" }
+                            ].map((item, idx) => (
+                            <li key={idx} className="flex items-center justify-between border-b border-zinc-800 pb-4 group cursor-default">
+                                <span className="text-zinc-500 group-hover:text-red-500 transition-colors">{item.label}</span>
+                                <span className="font-mono text-white text-lg">{item.val}</span>
+                            </li>
+                            ))}
+                        </ul>
+                        </div>
+
+                        <div className="relative">
+                        {/* Decorative Terminal */}
+                        <div className="rounded-lg overflow-hidden bg-[#0d0d0d] border border-zinc-800 shadow-2xl font-mono text-sm">
+                            <div className="bg-zinc-900 px-4 py-2 flex items-center gap-2 border-b border-zinc-800">
+                                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                                <span className="ml-2 text-xs text-zinc-500">mahasena_core.py</span>
+                            </div>
+                            <div className="p-6 text-zinc-400 space-y-2">
+                                <p><span className="text-purple-400">class</span> <span className="text-yellow-200">MahasenaSystem</span>:</p>
+                                <p className="pl-4"><span className="text-blue-400">def</span> <span className="text-yellow-200">__init__</span>(self):</p>
+                                <p className="pl-8">self.curriculum_agent = <span className="text-green-400">AgentA()</span></p>
+                                <p className="pl-8">self.executor_agent = <span className="text-green-400">AgentB()</span></p>
+                                <p className="pl-8">self.feedback_loop = <span className="text-green-400">RLHFAdapter()</span></p>
+                                <br/>
+                                <p className="pl-4"><span className="text-blue-400">def</span> <span className="text-yellow-200">train_cycle</span>(self):</p>
+                                <p className="pl-8"><span className="text-zinc-500"># Generate novel vulnerability scenario</span></p>
+                                <p className="pl-8">challenge = self.curriculum_agent.generate()</p>
+                                <p className="pl-8">response = self.executor_agent.mitigate(challenge)</p>
+                                <p className="pl-8 animate-pulse text-red-400">return self.validate(response)</p>
+                            </div>
+                        </div>
+                        
+                        {/* Floating Badge */}
+                        <div className="absolute -bottom-6 -right-6 bg-zinc-100 text-black px-6 py-4 rounded-lg shadow-xl">
+                            <p className="text-xs font-bold uppercase tracking-widest mb-1">Status</p>
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                <span className="font-bold">System Active</span>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                </section>
+
+                {/* Footer */}
+                <footer className="bg-zinc-950 py-12 border-t border-zinc-900">
+                    <div className="container mx-auto px-6">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+                        <div>
+                        <div className="flex items-center gap-2 mb-4">
+                            <Shield className="text-red-600" size={24} />
+                            <span className="text-xl font-bold tracking-widest text-white">MAHASENA</span>
+                        </div>
+                        <p className="text-zinc-500 text-sm max-w-sm">
+                            Proactive vulnerability discovery for the age of AI.
+                            Based on research by Kotala Kishan Reddy.
+                        </p>
+                        </div>
+                        
+                        <div className="flex flex-col gap-4 text-sm text-zinc-500 text-right">
+                        <a href="#" className="hover:text-white transition-colors">Whitepaper PDF</a>
+                        <a href="https://arxiv.org/abs/2511.16043" className="hover:text-white transition-colors">Ref: Agent 0 Architecture</a>
+                        <a href="https://www.anthropic.com/news/disrupting-Al-espionage" className="hover:text-white transition-colors">Ref: AI Espionage</a>
+                        </div>
+                    </div>
+                    <div className="mt-12 pt-8 border-t border-zinc-900 text-center text-xs text-zinc-600">
+                        © 2025 Mahasena Security Framework. All rights reserved.
+                    </div>
+                    </div>
+                </footer>
+                </div>
+            );
+        }
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
